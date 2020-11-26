@@ -12,12 +12,19 @@ class Orders extends Model
     protected $table = 'orders';
 
     protected $fillable = [
-        'user_id',
         'client_id',
         'comment',
         'status',
         'time',
         'car',
-        'services'
+        'services',
+        'user_id',
+        'name',
+        'phone',
+        'email'
     ];
+
+    function user() {
+        return $this->belongsTo('App\Models\User', 'user_id');
+    }
 }

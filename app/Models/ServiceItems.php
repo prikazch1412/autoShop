@@ -16,4 +16,8 @@ class ServiceItems extends Model
         'title',
         'service_id'
     ];
+
+    function items() {
+        return $this->hasMany('App\Models\ServiceItems', 'service_id');
+    }
 }

@@ -1,21 +1,25 @@
 <template>
     <div>
         <div class="title">Відгуки</div>
-        <div class="review-item">
+        <div class="review-item" v-if="isLoggedIn">
             <div class="photo">
-                <img class="avatar" src="/img/avatar.png" alt="">
+                <img class="avatar" :src="avatar" alt="">
             </div>
             <div class="text w-100">
                 <b-form-textarea
-                    id="textarea"
                     placeholder="Текст"
+                    v-model="newReview.comment"
                 ></b-form-textarea>
                 <div class="text-right mt-2">
-                    <b-button variant="outline-primary">Надіслати</b-button>
+                    <b-button variant="outline-primary" @click="postReview">Надіслати</b-button>
                 </div>
             </div>
         </div>
-        <Review v-for="i in 5" :key="i"></Review>
+        <Review
+            v-for="(item, index) in reviews"
+            :key="index"
+            :item="item"
+        ></Review>
     </div>
 </template>
 <script>
@@ -23,6 +27,33 @@ import Review from '../../site/ReviewItem'
 export default {
     components: {
         Review
+    },
+    computed: {
+        avatar() {
+            return this.$store.getters.authUser ? this.$store.getters.authUser.photo : "/img/no-image.png"
+        },
+        isLoggedIn() {
+            return this.$store.getters.isLoggedIn
+        }
+    },
+    props: {
+        reviews: Array
+    },
+    data() {
+        return {
+            newReview: {
+                comment: ""
+            }
+        }
+    },
+    methods: {
+        postReview() {
+            axios.post('/api/reviews/'+this.$route.params.id, this.newReview)
+            .then(() => {
+                this.newReview.comment = "";
+                this.$emit('update');
+            })
+        }
     }
 }
 </script>

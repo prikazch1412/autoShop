@@ -7,7 +7,7 @@ import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 import VeeValidate, { Validator } from 'vee-validate';
 import VueSilentbox from 'vue-silentbox'
 
-
+import 'vue-multiselect/dist/vue-multiselect.min.css';
 
 import HeaderComponent from './components/site/Header';
 import FooterComponent from './components/site/Footer';

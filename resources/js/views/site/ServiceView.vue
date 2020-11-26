@@ -4,26 +4,30 @@
             <b-col cols="9" class="info mr-3">
                 <b-row>
                     <b-col cols="4">
-                        <img class="avatar" src="/img/avatar.png" alt="">
+                        <img class="avatar" :src="user.photo" alt="">
                     </b-col>
                     <b-col>
-                        <div class="title">Lorem ipsum dolor</div>
+                        <div class="title">
+                            <span v-if="user.user_role_id == 2">{{ user.name }} {{ user.surname }}</span>
+                            <span v-if="user.user_role_id == 3">{{ user.service_name }}</span>
+                            <b-icon @click="favorite" class="cursor" icon="bookmark-heart-fill"></b-icon>
+                        </div>
                         <b-row class="description">
-                            <b-col cols="3" class="description-item">Lorem ipsum:</b-col>
-                            <b-col>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do Lorem ipsum dolor sit amet</b-col>
+                            <b-col cols="3" class="description-item">Адреса:</b-col>
+                            <b-col>{{ user.address }}</b-col>
                         </b-row>
                         <b-row class="description">
-                            <b-col cols="3" class="description-item">Lorem ipsum:</b-col>
-                            <b-col>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do Lorem ipsum dolor sit amet</b-col>
+                            <b-col cols="3" class="description-item">Телефон:</b-col>
+                            <b-col>{{ user.phone }}</b-col>
                         </b-row>
                         <b-row class="description">
-                            <b-col cols="3" class="description-item">Lorem ipsum:</b-col>
-                            <b-col>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do Lorem ipsum dolor sit amet</b-col>
+                            <b-col cols="3" class="description-item">Додаткова інформація:</b-col>
+                            <b-col>{{ user.description }}</b-col>
                         </b-row>
                     </b-col>
                 </b-row>
             </b-col>
-            <b-col class="menu pt-3 pb-0 pl-0 pr-0">
+            <b-col class="menu pt-4 pb-0 pl-0 pr-0">
                 <ul>
                     <li><router-link :to="'/service/' + $route.params.id">Послуги</router-link></li>
                     <li><router-link :to="'/service/' + $route.params.id + '/photo'">Фото</router-link></li>
@@ -31,14 +35,27 @@
                     <li><router-link :to="'/service/' + $route.params.id + '/address'">Адреса</router-link></li>
                     <li><router-link to="/">Задати питання</router-link></li>
                 </ul>
-                <button class="order-button">Замовити послугу</button>
             </b-col>
         </b-row>
         <div class="pages">
-            <Services v-if="$route.name == 'service-view'"></Services>
-            <Reviews v-if="$route.name == 'service-view-reviews'"></Reviews>
+            <Services
+                :services="user.services"
+                :service_items="user.service_items"
+                v-if="$route.name == 'service-view'"
+            ></Services>
+
+            <Reviews
+                :reviews="user.reviews"
+                @update="fetchData()"
+                v-if="$route.name == 'service-view-reviews'"
+            ></Reviews>
+
             <Address v-if="$route.name == 'service-view-address'"></Address>
-            <Photo v-if="$route.name == 'service-view-photo'"></Photo>
+
+            <Photo
+                :photos="user.photos"
+                v-if="$route.name == 'service-view-photo'"
+            ></Photo>
         </div>
     </b-container>
 </template>
@@ -53,6 +70,35 @@ export default {
         Reviews,
         Photo,
         Address
+    },
+    data() {
+        return {
+            user: {
+                photo: "",
+                name: "",
+                surname: "",
+                service_name: "",
+                description: "",
+                services: [],
+                photos: [],
+                reviews: []
+            }
+        }
+    },
+    created() {
+        this.fetchData();
+    },
+    methods: {
+        fetchData() {
+            axios.get('/api/service/'+this.$route.params.id)
+            .then((response) => {
+                console.log(response.data)
+                this.user = response.data;
+            })
+        },
+        favorite() {
+
+        }
     }
 }
 </script>
@@ -62,18 +108,6 @@ export default {
         padding: 20px 50px 20px 50px;
         margin-right: -15px;
         margin-left: -15px;
-    }
-    .menu .order-button {
-        border: 0;
-        background: #051F61;
-        border-radius: 10px;
-        font-weight: 500;
-        font-size: 18px;
-        color: #FFFFFF;
-        width: 100%;
-        padding: 10px 0;
-        position: absolute;
-        bottom: 0;
     }
     .menu ul li a:hover {
         color: #3174D2;
@@ -113,6 +147,7 @@ export default {
         font-weight: 500;
         font-size: 14px;
         line-height: 21px;
+        margin-bottom: 15px;
     }
     .info .description .description-item {
         color: #4B515B;

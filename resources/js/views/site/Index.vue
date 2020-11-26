@@ -6,28 +6,38 @@
                 <h1 class="header">Почніть пошук</h1>
                 <b-row class="inputs m-0">
                     <b-col>
-                        <input type="text" placeholder="Послуга">
-                        <div class="searchResult">
-                            <div v-for="i in 1" :key="i" class="item">
-                                Item {{i}}
-                            </div>
-                        </div>
+                        <multiselect
+                            :options="servicesItems"
+                            v-model="search.services"
+                            placeholder="Послуга"
+                            label="title"
+                            track-by="id"
+                            tagPlaceholder="Обрати"
+                            selectLabel="Обрати"
+                            noResult="Нічого не знайдено"
+                        ></multiselect>
                     </b-col>
                     <b-col>
-                        <input type="text" placeholder="Авто">
-                        <div class="searchResult">
-                            <div v-for="i in 1" :key="i" class="item">
-                                Item {{i}}
-                            </div>
-                        </div>
+                        <multiselect
+                            :options="cars"
+                            v-model="search.cars"
+                            placeholder="Авто"
+                            label="title"
+                            track-by="id"
+                            selectLabel="Обрати"
+                            noResult="Нічого не знайдено"
+                        ></multiselect>
                     </b-col>
                     <b-col>
-                        <input type="text" placeholder="Місто">
-                        <div class="searchResult">
-                            <div v-for="i in 1" :key="i" class="item">
-                                Item {{i}}
-                            </div>
-                        </div>
+                        <multiselect
+                            :options="city"
+                            v-model="search.city"
+                            placeholder="Місто"
+                            label="title"
+                            track-by="id"
+                            selectLabel="Обрати"
+                            noResult="Нічого не знайдено"
+                        ></multiselect>
                     </b-col>
                 </b-row>
                 <button class="button">Пошук сервісу</button>
@@ -68,8 +78,8 @@
                 ПОПУЛЯРНІ СЕРВІСИ
             </div>
             <b-row>
-                <b-col v-for="i in 3" :key="i">
-                    <ServiceItem></ServiceItem>
+                <b-col cols="4" v-for="(item, index) in popularServices" :key="index">
+                    <ServiceItem :user="item"></ServiceItem>
                 </b-col>
             </b-row>
             <div class="block-title">
@@ -86,21 +96,66 @@
                     <div class="title">
                         Авторизація
                     </div>
-                    <input type="text" placeholder="Email">
-                    <input type="password" placeholder="Пароль">
-                    <button>Вхід</button>
+                    <input v-model="credentials.email" type="text" placeholder="Email">
+                    <input v-model="credentials.password" type="password" placeholder="Пароль">
+                    <button @click="login">Вхід</button>
                 </div>
             </b-container>
         </div>
     </div>
 </template>
 <script>
+import { services } from "../../mixins/services";
+import { cars } from "../../mixins/cars";
+import { city } from "../../mixins/city";
+import Multiselect from 'vue-multiselect';
 import ServiceItem from "../../components/site/ServiceItem";
 import NewsItem from "../../components/site/NewsItem";
 export default {
+    mixins: [services, cars, city],
     components: {
         ServiceItem,
-        NewsItem
+        NewsItem,
+        Multiselect
+    },
+    data() {
+        return {
+            loading: false,
+            search: {
+                services: "",
+                cars: "",
+                city: ""
+            },
+            credentials: {
+                email: "",
+                password: ""
+            },
+            popularServices: []
+        }
+    },
+    created() {
+        this.fetchServicesItems();
+        this.fetchCars();
+        this.fetchCity();
+        this.getPopularServices();
+    },
+    methods: {
+        getPopularServices() {
+            axios.get('/api/popular-services')
+            .then((response) => {
+                this.popularServices = response.data;
+            })
+        },
+        login() {
+            this.loading = true;
+            this.$store.dispatch('login', this.credentials)
+            .then(() => {
+                window.location.href = '/profile';
+            })
+            .catch(err => {
+                this.loading = false;
+            })
+        },
     }
 }
 </script>
@@ -108,7 +163,7 @@ export default {
     .form-search {
         padding-top: 40px;
         min-height: 200px;
-        width: 75%;
+        width: 80%;
         background: #ffffff;
         margin: 0 auto;
         border-radius: 10px;
@@ -210,6 +265,6 @@ export default {
     .header-bg {
         height: 673px;
         background: url('/img/home_bg.png') no-repeat;
-        background-position: cover;
+        background-size: cover;
     }
 </style>

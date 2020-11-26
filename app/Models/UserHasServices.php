@@ -16,4 +16,8 @@ class UserHasServices extends Model
         'user_id',
         'service_id'
     ];
+
+    function service() {
+        return $this->belongsTo('App\Models\Services', 'service_id');
+    }
 }

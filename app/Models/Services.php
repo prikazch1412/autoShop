@@ -15,4 +15,12 @@ class Services extends Model
     protected $fillable = [
         'title'
     ];
+
+    function items() {
+        return $this->hasMany('App\Models\ServiceItems', 'service_id');
+    }
+
+    function itemsHesUsers() {
+        return $this->hasMany('App\Models\UserHasServiceItems', 'service_id');
+    }
 }

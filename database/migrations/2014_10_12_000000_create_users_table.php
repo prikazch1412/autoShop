@@ -24,6 +24,7 @@ class CreateUsersTable extends Migration
             $table->foreignId('city_id');
             $table->foreignId('user_role_id');
             $table->string('email')->unique();
+            $table->text('description')->nullable();
             $table->string('password');
             $table->timestamps();
         });

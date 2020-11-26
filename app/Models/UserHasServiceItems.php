@@ -14,7 +14,11 @@ class UserHasServiceItems extends Model
 
     protected $fillable = [
         'user_id',
-        'service_id',
-        'service_item_id'
+        'service_item_id',
+        'price'
     ];
+
+    function item() {
+        return $this->belongsTo('App\Models\ServiceItems', 'service_item_id');
+    }
 }

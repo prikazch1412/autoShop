@@ -15,4 +15,8 @@ class Models extends Model
     protected $fillable = [
         'title'
     ];
+
+    function series() {
+        return $this->hasMany('App\Models\Series', 'model_id');
+    }
 }

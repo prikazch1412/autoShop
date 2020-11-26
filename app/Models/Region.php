@@ -9,10 +9,14 @@ class Region extends Model
 {
     use HasFactory;
 
-    protected $table = 'region';
+    protected $table = 'regions';
     public $timestamps = false;
 
     protected $fillable = [
         'title'
     ];
+
+    function city() {
+        return $this->hasMany('App\Models\City', 'region_id');
+    }
 }

@@ -20,16 +20,16 @@
                         Аккаунт
                     </div>
                     <ul>
-                        <li>
+                        <li v-if="!isLoggedIn">
                             <router-link to="/login">Вхід</router-link>
                         </li>
-                        <li>
+                        <li v-if="!isLoggedIn">
                             <router-link to="/register">Реєстрація</router-link>
                         </li>
-                        <li>
+                        <li v-if="isLoggedIn">
                             <router-link to="/cabinet">Кабінет</router-link>
                         </li>
-                        <li>
+                        <li v-if="isLoggedIn">
                             <a href="#">Вихід</a>
                         </li>
                     </ul>
@@ -48,6 +48,15 @@
         </b-container>
     </div>
 </template>
+<script>
+export default {
+    computed: {
+        isLoggedIn() {
+            return this.$store.getters.isLoggedIn
+        }
+    },
+}
+</script>
 <style lang="css" scoped>
     .footer {
         margin-top: 50px;

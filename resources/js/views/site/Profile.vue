@@ -5,12 +5,12 @@
                 <ul class="menu">
                     <li><router-link :class="$route.name == 'profile' ? 'active' : ''" to="/profile">Загальна інформація</router-link></li>
                     <li><router-link :class="$route.name == 'profile-security' ? 'active' : ''" to="/profile/security">Налаштування безпеки</router-link></li>
-                    <li><router-link :class="$route.name == 'profile-services' ? 'active' : ''" to="/profile/services">Послуги</router-link></li>
-                    <li><router-link :class="$route.name == 'profile-photo' ? 'active' : ''" to="/profile/photo">Фото</router-link></li>
-                    <li><router-link :class="$route.name == 'profile-reviews' ? 'active' : ''" to="/profile/reviews">Відгуки</router-link></li>
-                    <li><router-link :class="$route.name == 'profile-orders' ? 'active' : ''" to="/profile/orders">Заявки</router-link></li>
+                    <li v-if="authUser.user_role_id == 2 || authUser.user_role_id == 3"><router-link :class="$route.name == 'profile-services' ? 'active' : ''" to="/profile/services">Послуги</router-link></li>
+                    <li v-if="authUser.user_role_id == 2 || authUser.user_role_id == 3"><router-link :class="$route.name == 'profile-photo' ? 'active' : ''" to="/profile/photo">Фото</router-link></li>
+                    <li v-if="authUser.user_role_id == 2 || authUser.user_role_id == 3"><router-link :class="$route.name == 'profile-reviews' ? 'active' : ''" to="/profile/reviews">Відгуки</router-link></li>
+                    <li v-if="authUser.user_role_id == 2 || authUser.user_role_id == 3"><router-link :class="$route.name == 'profile-orders' ? 'active' : ''" to="/profile/orders">Заявки</router-link></li>
                     <li><router-link :class="$route.name == 'profile-chats' ? 'active' : ''" to="/profile/chats">Діалоги</router-link></li>
-                    <li><router-link :class="$route.name == 'profile-cars' ? 'active' : ''" to="/profile/cars">Мої авто</router-link></li>
+                    <li v-if="authUser.user_role_id == 1"><router-link :class="$route.name == 'profile-cars' ? 'active' : ''" to="/profile/cars">Мої авто</router-link></li>
                 </ul>
             </b-col>
             <b-col class="pages">
@@ -45,6 +45,19 @@ export default {
         Orders,
         Cars,
         Chats
+    },
+    data() {
+        return {
+
+        }
+    },
+    computed: {
+        authUser() {
+            return this.$store.getters.authUser
+        }
+    },
+    methods: {
+
     }
 }
 </script>

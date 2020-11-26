@@ -7,7 +7,7 @@
         <title>СТО</title>
 		<link href="/css/croppie.css" rel="stylesheet">
 		<link href="/css/jquery.arcticmodal.css" rel="stylesheet">
-        <link href="/css/modal.css" rel="stylesheet">
+		<link href="/css/modal.css" rel="stylesheet">
         <script src="https://unpkg.com/vue-silentbox@0.1.9/dist/vue-silentbox.min.js"></script>
     </head>
     <body>

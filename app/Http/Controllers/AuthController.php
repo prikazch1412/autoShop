@@ -36,7 +36,7 @@ class AuthController extends Controller
 
     // login
     function login(Request $request) {
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password, 'account_role_id' => 1]) || Auth::attempt(['email' => $request->email, 'password' => $request->password, 'account_role_id' => 2])) {
+        if(Auth::attempt(['email' => $request->email, 'password' => $request->password, 'user_role_id' => 1]) || Auth::attempt(['email' => $request->email, 'password' => $request->password, 'user_role_id' => 2]) || Auth::attempt(['email' => $request->email, 'password' => $request->password, 'user_role_id' => 3])) {
             $user = Auth::user();
             $tokenResult = $user->createToken('Personal Access Token');
             $token = $tokenResult->token;

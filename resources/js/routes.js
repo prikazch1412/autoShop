@@ -8,6 +8,8 @@ import News from './views/site/News';
 import NewsView from './views/site/NewsView';
 import ServiceView from './views/site/ServiceView';
 import Profile from './views/site/Profile';
+import Favorites from './views/site/Favorites';
+import ErrorComponent from './views/ErrorComponent.vue';
 
 Vue.use(Router);
 
@@ -99,6 +101,16 @@ let router = new Router({
             name: 'profile-chat-id',
             component: Profile
         },
+        {
+            path: '/favorites', // избраннве
+            name: 'favorites',
+            component: Favorites
+        },
+        {
+            path: '/*',
+            name: 'error',
+            component: ErrorComponent,
+        },
     ]
 })
 
@@ -110,9 +122,9 @@ router.beforeEach((to, from, next) => {
             next('/login');
         }
     } else {
-        if((to.name == 'index' || to.name == 'login' || to.name == 'register') && store.getters.isLoggedIn) {
+        if((to.name == 'login' || to.name == 'register') && store.getters.isLoggedIn) {
             next({
-                path: '/cabinet',
+                path: '/profile',
                 params: { nextUrl: to.fullPath }
             });
         } else {

@@ -16,4 +16,8 @@ class Reviews extends Model
         'client_id',
         'comment'
     ];
+
+    function user() {
+        return $this->belongsTo('App\Models\User', 'client_id');
+    }
 }

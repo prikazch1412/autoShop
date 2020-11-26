@@ -1,22 +1,33 @@
 <template>
     <div class="review-item">
         <div class="photo">
-            <img class="avatar" src="/img/avatar.png" alt="">
+            <img class="avatar" :src="item.user.photo" alt="">
         </div>
         <div class="text">
-            <div><b>name</b> <span>12.12.2020</span> <b-icon v-if="$route.name == 'profile-reviews'" class="del-review" icon="x" font-scale="1.5"></b-icon></div>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur reprehenderit assumenda hic, error architecto, labore optio magni animi incidunt, quod id dolores natus quia excepturi veritatis. Sunt, soluta omnis. Incidunt.
+            <div><b>{{ item.user.name }} {{ item.user.surname }}</b> <span>{{ item.date }}</span> <b-icon @click="delReview(item)" v-if="$route.name == 'profile-reviews'" class="del-review" icon="x" font-scale="1.5"></b-icon></div>
+            {{ item.comment }}
         </div>
     </div>
 </template>
 <script>
 export default {
-
+    props: {
+        item: Object
+    },
+    methods: {
+        delReview(item) {
+            axios.post('/api/del-reviews/'+item.id)
+            .then(() => {
+                this.$emit('update');
+            })
+        }
+    }
 }
 </script>
 <style lang="css" scoped>
     .del-review {
         float: right;
+        cursor: pointer;
     }
     .review-item .form-control {
         width: 100%;

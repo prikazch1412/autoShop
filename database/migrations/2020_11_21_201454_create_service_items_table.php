@@ -17,6 +17,7 @@ class CreateServiceItemsTable extends Migration
             $table->id();
             $table->string('title');
             $table->foreignId('service_id');
+            $table->boolean('selected')->default(0);
         });
 
         Schema::table('service_items', function (Blueprint $table) {

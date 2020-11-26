@@ -1,27 +1,28 @@
 <template>
 <div>
-    <div class="order-item" v-for="i in 5" :key="i">
+    <div class="order-item" v-for="(item, index) in user.orders" :key="index">
         <div class="photo">
-            <img class="avatar" src="/img/avatar.png" alt="">
+            <img class="avatar" v-if="item.client_id" :src="item.user.photo" alt="">
+            <img class="avatar" v-else src="/img/no-image.png" alt="">
         </div>
         <div class="text">
             <div>
-                <b>Misha Otroshenko</b> Тел: 0994692170 <span>12.12.2020</span>
-                <b-icon class="del-review" icon="x" font-scale="1.5"></b-icon>
-                <b-icon class="del-review" icon="check2" font-scale="1.5"></b-icon><br>
-                Статсус: виконано
+                <b>{{ item.name }}</b> Тел: {{ item.phone }} <span>{{ item.date }}</span>
+                <b-icon @click="delOrder(item.id)" class="del-review cursor" icon="x" font-scale="1.5"></b-icon>
+                <b-icon v-if="item.status == 0" @click="updateOrder(item.id)" class="del-review cursor" icon="check2" font-scale="1.5"></b-icon><br>
+                Статсус: {{ item.status == 1 ? 'виконано' : "не виконано" }}
             </div>
             <hr>
             <b-row>
                 <b-col>
-                    <div>Авто: ZAZ TAVRIA</div>
-                    <div>Час: 12:00</div>
-                    <div>Комент: Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat illo, eligendi autem veniam dicta sequi obcaecati nobis</div>
+                    <div>Авто: {{ item.car.model }} {{ item.car.series }} {{ item.car.year }}</div>
+                    <div>Час: {{ item.time }}</div>
+                    <div>Комент: {{ item.comment }}</div>
                 </b-col>
                 <b-col>
                     <div>Список послуг</div>
-                    <div v-for="i in 5" :key="i">
-                        Test {{i}}
+                    <div v-for="(i, index) in item.services" :key="index">
+                        {{ i.item.title }} {{ i.price }} грн
                     </div>
                 </b-col>
             </b-row>
@@ -31,7 +32,36 @@
 </template>
 <script>
 export default {
-
+    data() {
+        return {
+            user: {
+                orders: []
+            }
+        }
+    },
+    created() {
+        this.fetchData();
+    },
+    methods: {
+        fetchData() {
+            axios.get('/api/profile')
+            .then((response) => {
+                this.user = response.data;
+            })
+        },
+        delOrder(id) {
+            axios.post('/api/del-order/'+id)
+            .then(() => {
+                this.fetchData();
+            })
+        },
+        updateOrder(id) {
+            axios.post('/api/update-order/'+id)
+            .then(() => {
+                this.fetchData();
+            })
+        }
+    }
 }
 </script>
 <style lang="css" scoped>
@@ -49,6 +79,7 @@ export default {
         display: inline-block;
     }
     .order-item .text {
+        width: 100%;
         margin-left: 15px;
         display: inline-block;
     }

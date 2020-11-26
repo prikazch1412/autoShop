@@ -8,6 +8,24 @@ import Review from '../../site/ReviewItem'
 export default {
     components: {
         Review
+    },
+    data() {
+        return {
+            user: {
+                reviews: []
+            }
+        }
+    },
+    created() {
+        this.fetchData();
+    },
+    methods: {
+        fetchData() {
+            axios.get('/api/profile')
+            .then((response) => {
+                this.user = response.data;
+            })
+        },
     }
 }
 </script>

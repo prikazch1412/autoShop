@@ -3,20 +3,27 @@
         <div class="form-search">
             <b-row class="inputs m-0">
                 <b-col class="pl-0">
-                    <input type="text" placeholder="Послуга">
-                    <div class="searchResult">
-                        <div v-for="i in 0" :key="i" class="item">
-                            Item {{i}}
-                        </div>
-                    </div>
+                    <multiselect
+                        :options="servicesItems"
+                        v-model="filter.services"
+                        placeholder="Послуга"
+                        label="title"
+                        track-by="id"
+                        tagPlaceholder="Обрати"
+                        selectLabel="Обрати"
+                        noResult="Нічого не знайдено"
+                    ></multiselect>
                 </b-col>
                 <b-col>
-                    <input type="text" placeholder="Авто">
-                    <div class="searchResult">
-                        <div v-for="i in 0" :key="i" class="item">
-                            Item {{i}}
-                        </div>
-                    </div>
+                    <multiselect
+                        :options="city"
+                        v-model="filter.city"
+                        placeholder="Місто"
+                        label="title"
+                        track-by="id"
+                        selectLabel="Обрати"
+                        noResult="Нічого не знайдено"
+                    ></multiselect>
                 </b-col>
                 <b-col>
                     <input type="text" placeholder="Серія">
@@ -82,24 +89,51 @@
         </div>
 
         <b-row>
-            <b-col v-for="i in 3" :key="i">
-                <ServiceItem></ServiceItem>
+            <b-col cols="4" v-for="(item, index) in users" :key="index">
+                <ServiceItem :user="item"></ServiceItem>
             </b-col>
         </b-row>
     </b-container>
 </template>
 <script>
+import { services } from "../../mixins/services";
+import { cars } from "../../mixins/cars";
+import { city } from "../../mixins/city";
+
+import Multiselect from 'vue-multiselect';
 import DatePicker from 'vue2-datepicker';
 import 'vue2-datepicker/index.css';
 import ServiceItem from "../../components/site/ServiceItem";
 export default {
+    mixins: [services, cars, city],
     components: {
         ServiceItem,
-        DatePicker
+        DatePicker,
+        Multiselect
     },
     data() {
         return {
-            moreFilter: false
+            moreFilter: false,
+            users: [],
+            filter: {
+                services: null,
+                city: null
+            }
+        }
+    },
+    created() {
+        this.fetchServicesItems();
+        this.fetchCars();
+        this.fetchCity();
+        this.fetchData();
+    },
+    methods: {
+        fetchData() {
+            axios.get('/api/service')
+            .then((response) => {
+                console.log(response.data)
+                this.users = response.data;
+            })
         }
     }
 }

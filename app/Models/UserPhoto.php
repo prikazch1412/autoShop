@@ -9,7 +9,7 @@ class UserPhoto extends Model
 {
     use HasFactory;
 
-    protected $table = 'account_role';
+    protected $table = 'user_photo';
     public $timestamps = false;
 
     protected $fillable = [

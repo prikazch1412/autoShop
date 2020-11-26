@@ -16,8 +16,8 @@ class CreateUserHasServiceItemsTable extends Migration
         Schema::create('user_has_service_items', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id');
-            $table->integer('service_id');
             $table->integer('service_item_id');
+            $table->string('price')->nullable();
         });
     }
 
