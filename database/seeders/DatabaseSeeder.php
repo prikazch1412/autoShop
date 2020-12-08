@@ -14,7 +14,8 @@ class DatabaseSeeder extends Seeder
             ModelsSeeder::class,
             SeriesSeeder::class,
             ServicesSeeder::class,
-            ServiceItemsSeeder::class
+            ServiceItemsSeeder::class,
+            UserSeeder::class
         ]);
     }
 }

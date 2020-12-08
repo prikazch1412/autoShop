@@ -17,3 +17,5 @@ composer.lock
 /public/css/app.css
 /public/js/app.js
 /public/js/admin.js
+/public/newsfiles
+/public/userfiles

@@ -16,4 +16,14 @@ class News extends Model
         'photo',
         'description'
     ];
+
+    protected $casts = [
+        'created_at' => 'datetime:Y.m.d',
+        'updated_at' => 'datetime:Y.m.d',
+    ];
+
+
+    function comments() {
+        return $this->hasMany('App\Models\Comments', 'news_id');
+    }
 }

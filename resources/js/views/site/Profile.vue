@@ -6,6 +6,7 @@
                     <li><router-link :class="$route.name == 'profile' ? 'active' : ''" to="/profile">Загальна інформація</router-link></li>
                     <li><router-link :class="$route.name == 'profile-security' ? 'active' : ''" to="/profile/security">Налаштування безпеки</router-link></li>
                     <li v-if="authUser.user_role_id == 2 || authUser.user_role_id == 3"><router-link :class="$route.name == 'profile-services' ? 'active' : ''" to="/profile/services">Послуги</router-link></li>
+                    <li v-if="authUser.user_role_id == 2 || authUser.user_role_id == 3"><router-link :class="$route.name == 'profile-service-cars' ? 'active' : ''" to="/profile/service-cars">Авто</router-link></li>
                     <li v-if="authUser.user_role_id == 2 || authUser.user_role_id == 3"><router-link :class="$route.name == 'profile-photo' ? 'active' : ''" to="/profile/photo">Фото</router-link></li>
                     <li v-if="authUser.user_role_id == 2 || authUser.user_role_id == 3"><router-link :class="$route.name == 'profile-reviews' ? 'active' : ''" to="/profile/reviews">Відгуки</router-link></li>
                     <li v-if="authUser.user_role_id == 2 || authUser.user_role_id == 3"><router-link :class="$route.name == 'profile-orders' ? 'active' : ''" to="/profile/orders">Заявки</router-link></li>
@@ -20,8 +21,10 @@
                 <Photo v-if="$route.name == 'profile-photo'"></Photo>
                 <Reviews v-if="$route.name == 'profile-reviews'"></Reviews>
                 <Orders v-if="$route.name == 'profile-orders'"></Orders>
-                <Chats v-if="$route.name == 'profile-chats'"></Chats>
                 <Cars v-if="$route.name == 'profile-cars'"></Cars>
+                <Chats v-if="$route.name == 'profile-chats'"></Chats>
+                <ChatView v-if="$route.name == 'profile-chat-id'"></ChatView>
+                <ServiceCars v-if="$route.name == 'profile-service-cars'"></ServiceCars>
             </b-col>
         </b-row>
     </b-container>
@@ -35,6 +38,8 @@ import Reviews from "../../components/site/profile/Reviews";
 import Orders from "../../components/site/profile/Orders";
 import Cars from "../../components/site/profile/Cars";
 import Chats from "../../components/site/profile/Chats";
+import ChatView from "../../components/site/profile/ChatView";
+import ServiceCars from "../../components/site/profile/ServiceCars";
 export default {
     components: {
         Index,
@@ -44,21 +49,15 @@ export default {
         Reviews,
         Orders,
         Cars,
-        Chats
-    },
-    data() {
-        return {
-
-        }
+        Chats,
+        ChatView,
+        ServiceCars
     },
     computed: {
         authUser() {
             return this.$store.getters.authUser
         }
     },
-    methods: {
-
-    }
 }
 </script>
 <style lang="css" scoped>

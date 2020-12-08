@@ -1,5 +1,8 @@
 <template>
-    <div>
+    <div class="wrapper-profile">
+        <div class="d-flex justify-content-center" v-if="preloader">
+            <b-spinner style="width: 2rem; height: 2rem;" label="Large Spinner"></b-spinner>
+        </div>
         <b-row>
             <b-col cols="6" v-for="(item, index) in compareServices" :key="index">
                 <div v-for="(i, index) in item" :key="index" class="checkbox-item">
@@ -45,6 +48,7 @@
 export default {
     data() {
         return {
+            preloader: true,
             loading: false,
             services: [],
             user: {
@@ -104,8 +108,11 @@ export default {
         fetchData() {
             axios.get('/api/profile')
             .then((response) => {
+                this.preloader = false;
                 this.user = response.data;
-            })
+            }).catch(() => {
+                this.preloader = false;
+            });
         },
         compareServiceItems(items) {
             items.forEach(element => {

@@ -9,6 +9,11 @@ use App\Models\Orders;
 
 class OrderController extends Controller
 {
+    function getOrders() {
+        $data = Orders::with('user')->get();
+        return response()->json($data);
+    }
+
     // postOrder
     function postOrder(Request $request, $id) {
         $model = new Orders();

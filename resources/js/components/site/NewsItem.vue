@@ -1,22 +1,20 @@
 <template>
     <div>
-        <b-row v-for="i in 3" :key="i" class="news-item">
+        <b-row v-for="(item, index) in data" :key="index" class="news-item">
             <b-col cols="4">
                 <div class="news-img">
-                    <img src="/img/news.png" alt="">
+                    <img :src="item.photo" alt="">
                 </div>
             </b-col>
             <b-col cols="6">
                 <div class='title'>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    {{ item.title }}
                 </div>
-                <div class="descriprion">
-                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veniam, atque. Fuga, nam! Suscipit assumenda molestias perspiciatis aperiam praesentium. Accusamus nobis cumque tenetur culpa eligendi voluptatum temporibus earum animi consequatur amet.
-                </div>
+                <div class="descriprion" v-html="item.description"></div>
             </b-col>
             <b-col cols="2" class="next">
                 <div>
-                    <img src="/img/next.png" alt=""> Далі
+                    <router-link :to="'/news/'+item.id"><img src="/img/next.png" alt=""> Далі</router-link>
                 </div>
             </b-col>
         </b-row>
@@ -24,7 +22,9 @@
 </template>
 <script>
 export default {
-
+    props: {
+        data: Array
+    }
 }
 </script>
 <style lang="css" scoped>
@@ -34,8 +34,11 @@ export default {
     .news-item .next {
         display: flex;
         align-items: center;
-        color: #051F61;
         font-size: 14px;
+    }
+    .news-item .next a {
+        color: #051F61;
+        text-decoration: none;
     }
     .news-item .next img {
         margin-right: 10px;

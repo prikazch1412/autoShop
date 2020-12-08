@@ -20,4 +20,8 @@ class ServiceItems extends Model
     function items() {
         return $this->hasMany('App\Models\ServiceItems', 'service_id');
     }
+
+    function service() {
+        return $this->belongsTo('App\Models\Services', 'service_id');
+    }
 }

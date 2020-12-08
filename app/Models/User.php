@@ -21,7 +21,8 @@ class User extends Authenticatable
         'user_role_id',
         'email',
         'password',
-        'description'
+        'description',
+        'status'
     ];
 
     protected $hidden = [
@@ -50,5 +51,21 @@ class User extends Authenticatable
 
     function cars() {
         return $this->HasMany('App\Models\UserCars', 'user_id');
+    }
+
+    function myFavorites() {
+        return $this->HasMany('App\Models\Favorites', 'user_id');
+    }
+
+    function favorites() {
+        return $this->HasMany('App\Models\Favorites', 'favorite_user_id');
+    }
+
+    function userRole() {
+        return $this->belongsTo('App\Models\UserRoles', 'user_role_id');
+    }
+
+    function serviceCars() {
+        return $this->HasMany('App\Models\ServiceCars', 'user_id');
     }
 }

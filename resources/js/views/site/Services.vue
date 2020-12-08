@@ -1,11 +1,11 @@
 <template>
-    <b-container>
+    <b-container class="wrapper-page">
         <div class="form-search">
             <b-row class="inputs m-0">
                 <b-col class="pl-0">
                     <multiselect
                         :options="servicesItems"
-                        v-model="filter.services"
+                        v-model="search.services"
                         placeholder="Послуга"
                         label="title"
                         track-by="id"
@@ -16,8 +16,19 @@
                 </b-col>
                 <b-col>
                     <multiselect
+                        :options="cars"
+                        v-model="search.cars"
+                        placeholder="Авто"
+                        label="title"
+                        track-by="id"
+                        selectLabel="Обрати"
+                        noResult="Нічого не знайдено"
+                    ></multiselect>
+                </b-col>
+                <b-col>
+                    <multiselect
                         :options="city"
-                        v-model="filter.city"
+                        v-model="search.city"
                         placeholder="Місто"
                         label="title"
                         track-by="id"
@@ -26,68 +37,41 @@
                     ></multiselect>
                 </b-col>
                 <b-col>
-                    <input type="text" placeholder="Серія">
-                    <div class="searchResult">
-                        <div v-for="i in 0" :key="i" class="item">
-                            Item {{i}}
-                        </div>
-                    </div>
-                </b-col>
-                <b-col>
-                    <input type="text" placeholder="Місто">
-                    <div class="searchResult">
-                        <div v-for="i in 0" :key="i" class="item">
-                            Item {{i}}
-                        </div>
-                    </div>
-                </b-col>
-                <b-col>
-                    <input type="text" placeholder="Район">
-                    <div class="searchResult">
-                        <div v-for="i in 0" :key="i" class="item">
-                            Item {{i}}
-                        </div>
-                    </div>
+                    <input type="text" placeholder="Назва сервісу" v-model="search.title">
                 </b-col>
                 <b-col class="pr-0">
-                    <button class="button">Пошук</button>
+                    <button class="button" @click="searchButton">
+                        <span
+                            class="spinner-border spinner-border-sm"
+                            role="status"
+                            aria-hidden="true"
+                            v-if="loading"
+                        ></span>
+                        <span class="sr-only" v-if="loading">Loading...</span>
+                        Пошук
+                    </button>
                 </b-col>
             </b-row>
-
-            <b-row class="inputs ml-0 mr-0 mt-4" v-if="moreFilter">
-                <b-col class="pl-0">
-                    <b-form-checkbox
-                        id="checkbox-service"
-                        name="checkbox-service"
-                    >
-                        Сервіс
-                    </b-form-checkbox>
-                </b-col>
-                <b-col>
-                    <b-form-checkbox
-                        id="checkbox-person"
-                        name="checkbox-person"
-                    >
-                        Спеціаліст
-                    </b-form-checkbox>
-                </b-col>
-                <b-col>
-                    <date-picker type="time" placeholder="Бажаний час"></date-picker>
-                </b-col>
-                <b-col>
-
-                </b-col>
-                <b-col>
-
-                </b-col>
-                <b-col class="pr-0"></b-col>
+            <b-row class="inputs ml-0 mr-0 mt-4">
+                    <b-col class="pl-0">
+                        <b-form-group>
+                            <b-form-checkbox-group
+                                id="checkbox-service"
+                                name="checkbox-service"
+                                v-model="search.user_roles"
+                                :options="user_types"
+                            >
+                            </b-form-checkbox-group>
+                        </b-form-group>
+                    </b-col>
             </b-row>
-
-            <div class="more-filter" @click="moreFilter = !moreFilter">
-                Розширений пошук {{ moreFilter ? "&and;" : "&or;" }}
-            </div>
         </div>
-
+        <div class="d-flex justify-content-center" v-if="preloader">
+            <b-spinner style="width: 4rem; height: 4rem;" label="Large Spinner"></b-spinner>
+        </div>
+        <div v-if="!preloader && users.length == 0" class="text-center">
+            Нічого не знайдено
+        </div>
         <b-row>
             <b-col cols="4" v-for="(item, index) in users" :key="index">
                 <ServiceItem :user="item"></ServiceItem>
@@ -113,11 +97,21 @@ export default {
     },
     data() {
         return {
+            preloader: true,
             moreFilter: false,
+            loading: false,
             users: [],
-            filter: {
-                services: null,
-                city: null
+            services: [],
+            user_types: [
+                { text: 'Сервісний центр', value: '3' },
+                { text: 'Майстер', value: '2' }
+            ],
+            search: {
+                services: "",
+                cars: "",
+                city: "",
+                title: "",
+                user_roles: []
             }
         }
     },
@@ -128,12 +122,48 @@ export default {
         this.fetchData();
     },
     methods: {
-        fetchData() {
-            axios.get('/api/service')
-            .then((response) => {
-                console.log(response.data)
-                this.users = response.data;
+        searchButton() {
+            this.loading = true;
+            var searchData = Object.assign({}, this.search);
+            if(this.search.services) {
+                searchData.services = this.search.services.id;
+            }
+            if(this.search.cars) {
+                searchData.cars = this.search.cars.id;
+            }
+            if(this.search.city) {
+                searchData.city = this.search.city.id;
+            }
+            axios.get('/api/service', {
+                params: searchData
             })
+            .then((response) => {
+                this.users = response.data;
+                this.loading = false;
+            })
+        },
+        fetchData() {
+            if (Object.keys(this.$route.query).length != 0) {
+                axios.get('/api/service', {
+                    params: this.$route.query
+                 })
+                .then((response) => {
+                    this.preloader = false;
+                    this.users = response.data;
+                }).catch(() => {
+                    this.preloader = false;
+                });
+            } else {
+                axios.get('/api/service', {
+                    params: this.search
+                })
+                .then((response) => {
+                    this.preloader = false;
+                    this.users = response.data;
+                }).catch(() => {
+                    this.preloader = false;
+                });
+            }
         }
     }
 }

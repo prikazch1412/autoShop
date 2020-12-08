@@ -261,17 +261,17 @@ export default {
             loading: false,
             error: false,
             loginCredentials: {
-                email: "mishaotroshenko2013@gmail.com",
-                password: "password"
+                email: "",
+                password: ""
             },
             registerCredentials: {
-                email: "mishaotroshenko2013@gmail.com",
-                phone: "0994692170",
+                email: "",
+                phone: "",
                 service_name: "",
-                name: "Миша",
-                surname: "Отрощенко",
-                password: "password",
-                repeat_password: "password",
+                name: "",
+                surname: "",
+                password: "",
+                repeat_password: "",
                 city: null,
                 user_role_id: 1
             }

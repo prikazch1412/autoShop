@@ -24,7 +24,8 @@ let router = new Router({
         {
             path: '/services', // сервисы
             name: 'services',
-            component: Services
+            component: Services,
+            props: route => ({ query: route.query })
         },
         {
             path: '/service/:id', // сервис
@@ -99,6 +100,11 @@ let router = new Router({
         {
             path: '/profile/chat/:id', // профиль chat
             name: 'profile-chat-id',
+            component: Profile
+        },
+        {
+            path: '/profile/service-cars', // профиль chat
+            name: 'profile-service-cars',
             component: Profile
         },
         {

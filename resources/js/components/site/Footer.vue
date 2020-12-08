@@ -11,7 +11,7 @@
                             <router-link to="/">Головна</router-link>
                         </li>
                         <li>
-                            <router-link to="/about">Про нас</router-link>
+                            <router-link to="/">Про нас</router-link>
                         </li>
                     </ul>
                 </b-col>
@@ -27,10 +27,10 @@
                             <router-link to="/register">Реєстрація</router-link>
                         </li>
                         <li v-if="isLoggedIn">
-                            <router-link to="/cabinet">Кабінет</router-link>
+                            <router-link to="/profile">Кабінет</router-link>
                         </li>
                         <li v-if="isLoggedIn">
-                            <a href="#">Вихід</a>
+                            <a href="#" @click="logout">Вихід</a>
                         </li>
                     </ul>
                 </b-col>
@@ -55,6 +55,13 @@ export default {
             return this.$store.getters.isLoggedIn
         }
     },
+    methods: {
+        logout() {
+            this.$store.dispatch('logout').then(() => {
+                this.$router.push('/')
+            })
+        },
+    }
 }
 </script>
 <style lang="css" scoped>

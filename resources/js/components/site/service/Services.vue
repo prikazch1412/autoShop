@@ -3,7 +3,7 @@
         <b-modal v-model="orderModal" title="Замовити послугу" size="lg" hide-footer no-close-on-backdrop>
         <div class="px-3">
             <div class="title-order">
-                Обрані послуги
+                Обрані послуги на суму: <b>{{ sumOrder }}</b> грн
             </div>
             <div class="select-items" v-for="(serviceItem, index) in userData.services" :key="index">
                 {{ serviceItem.item.title }} {{ serviceItem.price }} грн <b-icon class="cursor" @click="delServiceItem(serviceItem)" style="float:right" icon="x" font-scale="1.5"></b-icon>
@@ -92,7 +92,7 @@
                 class="mb-3"
             ></b-form-textarea>
 
-            <button @click="order">
+            <b-button @click="order">
                 <span
                     class="spinner-border spinner-border-sm"
                     role="status"
@@ -101,13 +101,13 @@
                 ></span>
                 <span class="sr-only" v-if="loading">Loading...</span>
                 Замовити
-            </button>
+            </b-button>
             </div>
         </b-modal>
         <div class="title">
             Послуги <b-button :disabled="userData.services.length == 0" type="submit" class="order-button" variant="primary" @click="orderModal = true">Замовити послугу</b-button>
         </div>
-        <b-row>
+        <b-row class="block-service">
             <b-col cols="4" class="service-title px-0">
                 <div v-for="(item, index) in services" :key="index" :class="selectService == index ? 'active' : 'service-title-item'" @click="opesService(item, index)">
                     {{ item.service.title }}
@@ -158,6 +158,13 @@ export default {
         }
     },
     computed: {
+        sumOrder() {
+            var result = 0;
+            this.userData.services.map(item => {
+                result += +item.price;
+            })
+            return result;
+        },
         getSeries() {
             if(this.userData.car.model) {
                 return this.series.filter(item => {
@@ -209,7 +216,6 @@ export default {
                 itemService.item.selected = 0;
                 this.userData.services.splice(index, 1);
             }
-            console.log(this.userData.services)
         },
         delServiceItem(item) {
             let index = this.userData.services.indexOf(item);
@@ -219,6 +225,9 @@ export default {
 }
 </script>
 <style lang="css" scoped>
+    .block-service {
+        min-height: 300px;
+    }
     .order-button {
         float: right;
         background: #051F61;

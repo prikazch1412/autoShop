@@ -40,7 +40,7 @@
                         ></multiselect>
                     </b-col>
                 </b-row>
-                <button class="button">Пошук сервісу</button>
+                <button class="button" @click="searchButton">Пошук сервісу</button>
             </div>
             <div class="block-title">
                 ЯК DREAMCAR МОЖЕ МЕНІ ДОПОМОГТИ?
@@ -85,12 +85,12 @@
             <div class="block-title">
                 ОСТАННІ НОВИНИ
             </div>
-            <NewsItem></NewsItem>
-            <div class="block-title">
+            <NewsItem :data="lastNews"></NewsItem>
+            <div class="block-title" v-show="!isLoggedIn">
                 БІЛЬШЕ МОЖЛИВОСТЕЙ
             </div>
         </b-container>
-        <div class="block-auth">
+        <div class="block-auth" v-show="!isLoggedIn">
             <b-container>
                 <div class="login">
                     <div class="title">
@@ -102,17 +102,14 @@
                 </div>
             </b-container>
         </div>
+        <hr v-show="isLoggedIn">
     </div>
 </template>
 <script>
-import { services } from "../../mixins/services";
-import { cars } from "../../mixins/cars";
-import { city } from "../../mixins/city";
 import Multiselect from 'vue-multiselect';
 import ServiceItem from "../../components/site/ServiceItem";
 import NewsItem from "../../components/site/NewsItem";
 export default {
-    mixins: [services, cars, city],
     components: {
         ServiceItem,
         NewsItem,
@@ -130,22 +127,45 @@ export default {
                 email: "",
                 password: ""
             },
-            popularServices: []
+            servicesItems: [],
+            cars: [],
+            city: [],
+            popularServices: [],
+            lastNews: []
         }
     },
     created() {
-        this.fetchServicesItems();
-        this.fetchCars();
-        this.fetchCity();
-        this.getPopularServices();
+        this.getData();
+    },
+    computed: {
+        isLoggedIn() {
+            return this.$store.getters.isLoggedIn
+        }
     },
     methods: {
-        getPopularServices() {
-            axios.get('/api/popular-services')
+        getData() {
+            axios.get('/api/home')
             .then((response) => {
-                this.popularServices = response.data;
+                this.popularServices = response.data.popularServices;
+                this.lastNews = response.data.lastNews;
+                this.servicesItems = response.data.servicesItems;
+                this.cars = response.data.cars;
+                this.city = response.data.city;
             })
         },
+        searchButton() {
+            if(this.search.services) {
+                this.search.services = this.search.services.id;
+            }
+            if(this.search.cars) {
+                this.search.cars = this.search.cars.id;
+            }
+            if(this.search.city) {
+                this.search.city = this.search.city.id;
+            }
+            this.$router.push({ name: 'services', query: this.search})
+        },
+
         login() {
             this.loading = true;
             this.$store.dispatch('login', this.credentials)

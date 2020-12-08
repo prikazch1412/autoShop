@@ -12,10 +12,73 @@ use App\Models\UserHasServiceItems;
 use App\Models\UserPhoto;
 use App\Models\Reviews;
 use App\Models\UserCars;
+use App\Models\Favorites;
+use App\Models\ServiceCars;
+
+use App\Models\ServiceItems;
+use App\Models\Models;
+use App\Models\City;
+use App\Models\News;
 
 class UserController extends Controller
 {
     protected $fileStorage = "userfiles/";
+
+    function home() {
+        $serviceItems = ServiceItems::with('service')->get();
+        $models = Models::with('series')->get();
+        $city = City::get();
+        $popularServices = User::with(
+            'services.service',
+            'serviceItems.item',
+            'photos'
+        )->where("user_role_id", 2)->orWhere("user_role_id", 3)->limit(6)->get();
+        $lastNews = News::limit(6)->get();
+
+        return response()->json([
+            "servicesItems" => $serviceItems,
+            "cars" => $models,
+            "city" => $city,
+            "popularServices" => $popularServices,
+            "lastNews" => $lastNews
+        ]);
+     }
+
+    // updateUser
+    function updateUser(Request $request, $id) {
+        User::find($id)->update([
+            "status" => $request->status
+        ]);
+        return response('ok', 200);
+     }
+
+    // getUsers
+    function getUsers() {
+       $data = User::with("userRole")->where('user_role_id', '!=', 4)->get();
+        return response()->json($data);
+    }
+
+    // delFavorites
+    function delFavorites($id) {
+        Favorites::where("user_id", Auth::id())->where('favorite_user_id', $id)->delete();
+        return response('ok', 200);
+    }
+
+    // getFavorites
+    function getFavorites() {
+        $data = Favorites::with('user.photos')->where("user_id", Auth::id())->get();
+        return response()->json($data);
+    }
+
+    // postFavorites
+    function postFavorites(Request $request) {
+        $model = new Favorites();
+        $model->create([
+            "user_id" => Auth::id(),
+            "favorite_user_id" => $request->user_id
+        ]);
+        return response('ok', 200);
+    }
 
     //getPopularServices
     function getPopularServices() {
@@ -61,13 +124,35 @@ class UserController extends Controller
 
     //getServices
     function getServices(Request $request) {
-        $data = User::with('services.service', 'serviceItems.item', 'photos')->where("user_role_id", 2)->orWhere("user_role_id", 3)->get();
+        $model = User::with('services.service', 'serviceItems.item', 'photos', 'favorites', 'serviceCars')->whereNotIn('user_role_id', [1, 4]);
+        if($request->services != "") {
+            $model->whereHas('serviceItems.item', function($query) use ($request) {
+                $query->where('service_item_id', "=", $request->services);
+            });
+        }
+        if($request->cars != "") {
+            $model->whereHas('serviceCars', function ($query) use ($request) {
+                $query->where('model_id', $request->cars);
+            });
+        }
+        if($request->city != "") {
+            $model->where('city_id', $request->city);
+        }
+        if($request->title != "") {
+            $model->where('name', $request->title)->orWhere('surname', $request->title)->orWhere('service_name', $request->title);
+        }
+
+        if($request->user_roles != "") {
+            $model->whereIn('user_role_id', $request->user_roles);
+        }
+
+        $data = $model->get();
         return response()->json($data);
     }
 
     //getServiceId
     function getServiceId($id) {
-        $data = User::with('services.service', 'serviceItems.item', 'photos', 'reviews.user')->find($id);
+        $data = User::with('services.service', 'serviceItems.item', 'photos', 'reviews.user', 'favorites', 'serviceCars.car')->find($id);
         foreach ($data['reviews'] as $key => $value) {
             $value['date'] = Carbon::parse($value['created_at'])->format('d.m.Y');
         }
@@ -82,7 +167,8 @@ class UserController extends Controller
             'photos',
             'orders.user',
             'reviews.user',
-            'cars'
+            'cars',
+            'serviceCars.car'
         )->find(Auth::id());
         foreach ($data['orders'] as $key => $value) {
             $value['date'] = Carbon::parse($value['created_at'])->format('d.m.Y');
@@ -123,6 +209,17 @@ class UserController extends Controller
                         ]);
                     }
                 }
+            }
+        }
+
+        if($request->cars) {
+            ServiceCars::where("user_id", $id)->delete();
+            foreach ($request->cars as $key => $value) {
+                $model = new ServiceCars();
+                $model->create([
+                    "user_id" => $id,
+                    "model_id" => $value['id']
+                ]);
             }
         }
         User::find($id)->update($data);

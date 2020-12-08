@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="wrapper-profile">
         <b-row class="mb-3">
             <b-col cols="3" class="label-profile">
                 Стврий пароль
@@ -62,6 +62,8 @@ export default {
     methods: {
         save() {
             this.loading = true;
+            this.user.services = null;
+            this.user.cars = null;
             axios.post('/api/profile', this.user)
             .then((response) => {
                 this.loading = false;

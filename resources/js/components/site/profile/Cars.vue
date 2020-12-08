@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="wrapper-profile">
         <b-modal v-model="carModal" title="Додати авто" hide-footer no-close-on-backdrop>
             <b-form-group
                 label="Модель"
@@ -46,11 +46,12 @@
                     noResult="Нічого не знайдено"
                 ></multiselect>
             </b-form-group>
-
-            <button @click="addCar">Додати</button>
+            <b-button @click="addCar" variant="secondary">Додати</b-button>
         </b-modal>
-
-        <b-row class="mb-3">
+        <div class="d-flex justify-content-center" v-if="preloader">
+            <b-spinner style="width: 2rem; height: 2rem;" label="Large Spinner"></b-spinner>
+        </div>
+        <b-row class="mb-3" v-if="user.cars.length > 0">
             <b-col>
                 Марка
             </b-col>
@@ -62,15 +63,18 @@
             </b-col>
             <b-col></b-col>
         </b-row>
+        <div v-if="!preloader && user.cars.length == 0" class="text-center">
+            Авто відсутні
+        </div>
         <b-row v-for="(item, index) in user.cars" :key="index" class="table">
             <b-col>
-                ZAZ
+                {{item.model}}
             </b-col>
             <b-col>
-                TAVRIA
+                {{item.series}}
             </b-col>
             <b-col>
-                1998
+                {{item.year}}
             </b-col>
             <b-col class="text-right">
                 <b-icon @click="delCar(item)" class="cursor" icon="x" font-scale="1.5"></b-icon>
@@ -94,6 +98,7 @@ export default {
     },
     data() {
         return {
+            preloader: true,
             carModal: false,
             user: {
                 cars: []
@@ -125,8 +130,11 @@ export default {
         fetchData() {
             axios.get('/api/profile')
             .then((response) => {
+                this.preloader = false;
                 this.user = response.data;
-            })
+            }).catch(() => {
+                this.preloader = false;
+            });
         },
         delCar(item) {
             axios.post('/api/del-user-car/'+item.id)

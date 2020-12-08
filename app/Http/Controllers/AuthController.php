@@ -55,7 +55,7 @@ class AuthController extends Controller
 
     // loginAdmin
     function loginAdmin(Request $request) {
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password, 'account_role_id' => 3])) {
+        if(Auth::attempt(['email' => $request->email, 'password' => $request->password, 'user_role_id' => 4])) {
             $user = $request->user();
             $tokenResult = $user->createToken('Personal Access Token');
             $token = $tokenResult->token;

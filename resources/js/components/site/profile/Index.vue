@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="wrapper-profile">
         <div style="display:none">
             <div class="profile-modal-photo box-modal">
                 <div class="box-modal_close arcticmodal-close"></div>
@@ -158,7 +158,8 @@ export default {
                 city_id: "",
                 user_role_id: "",
                 photo: null,
-                description: ""
+                description: "",
+                cars: []
             }
         }
     },
@@ -182,6 +183,7 @@ export default {
             this.loading = true;
             this.user.photo = document.getElementById("fileinput_c").getAttribute('value')
             this.user.services = null;
+            this.user.cars = null;
             axios.post('/api/profile', this.user)
             .then((response) => {
                 this.loading = false;

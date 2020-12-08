@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="wrapper-profile">
         <b-row>
             <b-col cols="9">
                 <div class="upload-files">
@@ -25,6 +25,12 @@
                 </b-button>
             </b-col>
         </b-row>
+        <div class="d-flex justify-content-center" v-if="preloader">
+            <b-spinner style="width: 2rem; height: 2rem;" label="Large Spinner"></b-spinner>
+        </div>
+        <div v-if="!preloader && user.photos.length == 0" class="text-center">
+            Фото відсутні
+        </div>
         <b-row>
             <b-col cols="4" v-for="(item, index) in user.photos" :key="index" class="photo-item mb-4">
                 <b-icon @click="delPhoto(item)" class="del-photo" icon="x" font-scale="1.5"></b-icon>
@@ -37,6 +43,7 @@
 export default {
     data() {
         return {
+            preloader: true,
             file: null,
             foto: [],
             loading: false,
@@ -68,8 +75,11 @@ export default {
         fetchData() {
             axios.get('/api/profile')
             .then((response) => {
+                this.preloader = false;
                 this.user = response.data;
-            })
+            }).catch(() => {
+                this.preloader = false;
+            });
         },
         delPhoto(item) {
             axios.post('/api/profile/del-photo/'+item.id)

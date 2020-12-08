@@ -14,7 +14,7 @@ class ServiceController extends Controller
         return response()->json($data);
     }
     function getItems() {
-        $data = ServiceItems::get();
+        $data = ServiceItems::with('service')->get();
         return response()->json($data);
     }
 }

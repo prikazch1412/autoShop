@@ -11,6 +11,14 @@
 		url('/fonts/proxima-nova/ProximaNovaCond-Regular.ttf') format('truetype');
 }
 
+.wrapper-page {
+    min-height: 300px;
+}
+
+.wrapper-profile {
+    min-height: 400px;
+}
+
 body {
     background: #ffffff;
 }

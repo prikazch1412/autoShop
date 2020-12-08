@@ -1,5 +1,16 @@
 <template>
     <b-container class="wrapper">
+        <b-modal v-model="messageForm" title="Надіслати повідомлення" hide-footer no-close-on-backdrop>
+            <b-form-textarea
+                id="textarea"
+                v-model="message"
+                placeholder="Ваше повідомлення..."
+                rows="3"
+                max-rows="6"
+            ></b-form-textarea>
+            <b-button class="mt-3" @click="sendMessage">Надіслати</b-button>
+        </b-modal>
+
         <b-row>
             <b-col cols="9" class="info mr-3">
                 <b-row>
@@ -10,7 +21,8 @@
                         <div class="title">
                             <span v-if="user.user_role_id == 2">{{ user.name }} {{ user.surname }}</span>
                             <span v-if="user.user_role_id == 3">{{ user.service_name }}</span>
-                            <b-icon @click="favorite" class="cursor" icon="bookmark-heart-fill"></b-icon>
+                            <b-icon v-if="user.favorites.find(item => item.user_id == $store.getters.authUser.id)" @click="delFavorite" class="cursor" icon="bookmark-heart-fill"></b-icon>
+                            <b-icon v-else @click="favorite" class="cursor" icon="bookmark-heart"></b-icon>
                         </div>
                         <b-row class="description">
                             <b-col cols="3" class="description-item">Адреса:</b-col>
@@ -19,6 +31,10 @@
                         <b-row class="description">
                             <b-col cols="3" class="description-item">Телефон:</b-col>
                             <b-col>{{ user.phone }}</b-col>
+                        </b-row>
+                        <b-row class="description">
+                            <b-col cols="3" class="description-item">Моделі авто:</b-col>
+                            <b-col><span v-for="(item, index) in user.service_cars" :key="index">{{ item.car.title }}, </span></b-col>
                         </b-row>
                         <b-row class="description">
                             <b-col cols="3" class="description-item">Додаткова інформація:</b-col>
@@ -33,7 +49,7 @@
                     <li><router-link :to="'/service/' + $route.params.id + '/photo'">Фото</router-link></li>
                     <li><router-link :to="'/service/' + $route.params.id + '/reviews'">Відгуки</router-link></li>
                     <li><router-link :to="'/service/' + $route.params.id + '/address'">Адреса</router-link></li>
-                    <li><router-link to="/">Задати питання</router-link></li>
+                    <li @click="messageForm = true"><a href="#">Задати питання</a></li>
                 </ul>
             </b-col>
         </b-row>
@@ -73,6 +89,8 @@ export default {
     },
     data() {
         return {
+            messageForm: false,
+            message: "",
             user: {
                 photo: "",
                 name: "",
@@ -81,7 +99,9 @@ export default {
                 description: "",
                 services: [],
                 photos: [],
-                reviews: []
+                reviews: [],
+                favorites: [],
+                service_cars: []
             }
         }
     },
@@ -89,6 +109,16 @@ export default {
         this.fetchData();
     },
     methods: {
+        sendMessage() {
+            axios.post('/api/chats', {
+                user_id: this.$route.params.id,
+                message: this.message
+            })
+            .then(() => {
+                this.messageForm = false;
+                this.message = "";
+            })
+        },
         fetchData() {
             axios.get('/api/service/'+this.$route.params.id)
             .then((response) => {
@@ -97,7 +127,18 @@ export default {
             })
         },
         favorite() {
-
+            axios.post('/api/favorites', {
+                user_id: this.$route.params.id
+            })
+            .then(() => {
+                this.fetchData();
+            })
+        },
+        delFavorite() {
+            axios.post('/api/del-favorites/'+this.$route.params.id)
+            .then(() => {
+                this.fetchData();
+            })
         }
     }
 }

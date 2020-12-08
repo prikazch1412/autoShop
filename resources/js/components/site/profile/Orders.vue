@@ -1,5 +1,11 @@
 <template>
-<div>
+<div class="wrapper-profile">
+    <div class="d-flex justify-content-center" v-if="preloader">
+        <b-spinner style="width: 2rem; height: 2rem;" label="Large Spinner"></b-spinner>
+    </div>
+    <div v-if="!preloader && user.orders.length == 0" class="text-center">
+        Замовлення відсутні
+    </div>
     <div class="order-item" v-for="(item, index) in user.orders" :key="index">
         <div class="photo">
             <img class="avatar" v-if="item.client_id" :src="item.user.photo" alt="">
@@ -34,6 +40,7 @@
 export default {
     data() {
         return {
+            preloader: true,
             user: {
                 orders: []
             }
@@ -46,8 +53,11 @@ export default {
         fetchData() {
             axios.get('/api/profile')
             .then((response) => {
+                this.preloader = false;
                 this.user = response.data;
-            })
+            }).catch(() => {
+                this.preloader = false;
+            });
         },
         delOrder(id) {
             axios.post('/api/del-order/'+id)
