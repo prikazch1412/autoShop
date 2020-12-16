@@ -20,8 +20,11 @@ class CreateOrdersTable extends Migration
             $table->text('comment')->nullable();
             $table->boolean('status')->default(0);
             $table->string('time')->nullable();
+            $table->string('name');
+            $table->string('phone');
             $table->string('car');
             $table->text('services')->nullable();
+            $table->string('email');
             $table->timestamps();
         });
     }
