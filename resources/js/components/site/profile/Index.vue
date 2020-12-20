@@ -201,7 +201,6 @@ export default {
                     photo_c: $('input[name="photo_c"]').val()
                 }).then((response) => {
                     if(response.data.status == "success") {
-                        console.log(response.data.path_mini)
                         $('input[name="photo_c"]').attr('value',response.data.path_mini);
                         $('.perscab-photoedit-img').attr('src',response.data.path_mini);
                         $('.profile-modal-photo').arcticmodal('close');

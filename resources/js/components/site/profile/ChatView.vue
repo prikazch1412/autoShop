@@ -43,7 +43,6 @@ export default {
 
         Echo.channel('chat-'+this.$route.params.id)
             .listen('MessageSentEvent', (e) => {
-                console.log(e)
                 this.messages.push(e);
             });
     },

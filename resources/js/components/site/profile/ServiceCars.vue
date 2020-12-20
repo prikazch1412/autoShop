@@ -68,7 +68,6 @@ export default {
                         item.selected = 1;
                     }
                 });
-                console.log(this.cars)
             }).catch(() => {
                 this.preloader = false;
             });

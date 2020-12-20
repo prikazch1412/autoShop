@@ -10,7 +10,7 @@
             </div>
             <hr>
             <div class="title-order">
-                Ваше авто (таврия, ланос)
+                Ваше авто (<span class="user-car" v-for="(item, index) in userCars" @click="setCar(item)" :key="index">{{ item.model }}</span>)
             </div>
             <b-row>
                 <b-col>
@@ -154,7 +154,8 @@ export default {
                 email: "",
                 comment: "",
                 services: []
-            }
+            },
+            userCars: []
         }
     },
     computed: {
@@ -182,6 +183,7 @@ export default {
     created() {
         this.fetchCars();
         this.fetchSeries();
+        this.fetchUserData();
         if(this.$store.getters.isLoggedIn) {
             this.userData.name = this.$store.getters.authUser.name;
             this.userData.email = this.$store.getters.authUser.email;
@@ -189,6 +191,20 @@ export default {
         }
     },
     methods: {
+        setCar(item) {
+            this.userData.car.model = this.cars.find(model => model.title == item.model);
+            this.userData.car.series = this.userData.car.model.series.find(series => series.title == item.series);
+            this.userData.car.year = item.year;
+        },
+        fetchUserData() {
+            axios.get('/api/profile')
+            .then((response) => {
+                if(response.data.cars.length == 1) {
+                    this.setCar(response.data.cars[0]);
+                }
+                this.userCars = response.data.cars;
+            })
+        },
         order() {
             if(this.userData.car.model) {
                 this.userData.car.model = this.userData.car.model.title;
@@ -225,6 +241,14 @@ export default {
 }
 </script>
 <style lang="css" scoped>
+    .user-car {
+        font-weight: bold;
+        cursor: pointer;
+        padding: 0 5px;
+    }
+    .user-car:hover {
+        text-decoration: underline;
+    }
     .block-service {
         min-height: 300px;
     }

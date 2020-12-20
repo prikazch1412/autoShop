@@ -60,57 +60,90 @@ let router = new Router({
         {
             path: '/profile', // профиль
             name: 'profile',
-            component: Profile
+            component: Profile,
+            meta: {
+                requiresAuth: true
+            }
         },
         {
             path: '/profile/security', // профиль безопасность
             name: 'profile-security',
-            component: Profile
+            component: Profile,
+            meta: {
+                requiresAuth: true
+            }
         },
         {
             path: '/profile/services', // профиль сервисы
             name: 'profile-services',
-            component: Profile
+            component: Profile,
+            meta: {
+                requiresAuth: true
+            }
         },
         {
             path: '/profile/photo', // профиль photo
             name: 'profile-photo',
-            component: Profile
+            component: Profile,
+            meta: {
+                requiresAuth: true
+            }
         },
         {
             path: '/profile/reviews', // профиль reviews
             name: 'profile-reviews',
-            component: Profile
+            component: Profile,
+            meta: {
+                requiresAuth: true
+            }
         },
         {
             path: '/profile/orders', // профиль orders
             name: 'profile-orders',
-            component: Profile
+            component: Profile,
+            meta: {
+                requiresAuth: true
+            }
         },
         {
             path: '/profile/cars', // профиль cars
             name: 'profile-cars',
-            component: Profile
+            component: Profile,
+            meta: {
+                requiresAuth: true
+            }
         },
         {
             path: '/profile/chats', // профиль chats
             name: 'profile-chats',
-            component: Profile
+            component: Profile,
+            meta: {
+                requiresAuth: true
+            }
         },
         {
             path: '/profile/chat/:id', // профиль chat
             name: 'profile-chat-id',
-            component: Profile
+            component: Profile,
+            meta: {
+                requiresAuth: true
+            }
         },
         {
             path: '/profile/service-cars', // профиль chat
             name: 'profile-service-cars',
-            component: Profile
+            component: Profile,
+            meta: {
+                requiresAuth: true
+            }
         },
         {
             path: '/favorites', // избраннве
             name: 'favorites',
-            component: Favorites
+            component: Favorites,
+            meta: {
+                requiresAuth: true
+            }
         },
         {
             path: '/*',
@@ -125,7 +158,7 @@ router.beforeEach((to, from, next) => {
         if (store.getters.isLoggedIn) {
             next();
         } else {
-            next('/login');
+            next('/');
         }
     } else {
         if((to.name == 'login' || to.name == 'register') && store.getters.isLoggedIn) {

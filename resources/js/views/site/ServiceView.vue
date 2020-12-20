@@ -122,7 +122,6 @@ export default {
         fetchData() {
             axios.get('/api/service/'+this.$route.params.id)
             .then((response) => {
-                console.log(response.data)
                 this.user = response.data;
             })
         },

@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="{{ mix('css/app.css') }}" rel="stylesheet">
         <title>СТО</title>
+        <link href="/favicon.ico" rel="icon" type="image/png">
 		<link href="/css/croppie.css" rel="stylesheet">
 		<link href="/css/jquery.arcticmodal.css" rel="stylesheet">
 		<link href="/css/modal.css" rel="stylesheet">

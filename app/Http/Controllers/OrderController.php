@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Mail\MemberEmail;
+use Illuminate\Support\Facades\Mail;
 
 use App\Models\Orders;
+use App\Models\User;
 
 class OrderController extends Controller
 {
@@ -28,6 +31,19 @@ class OrderController extends Controller
             "car" => json_encode($request->car),
             "services" => json_encode($request->services)
         ]);
+
+        $textMessage = 'Нова заявка на ремонт авто. <a href="' . $_SERVER['SERVER_NAME'] . '/profile/orders/">Перейти в кабінет</a>';
+
+        $user = User::find($id);
+        $email = $user['email'];
+
+        Mail::send([], [], function($message) use ($textMessage, $email) {
+            $message->to($email)
+            ->subject('Нова заявка на ремонт авто')
+            ->from('mykhaylo.otroshchenko@student.sumdu.edu.ua', 'STO')
+            ->setBody($textMessage, 'text/html');
+        });
+
         return response('ok', 200);
     }
     // updateOrder
