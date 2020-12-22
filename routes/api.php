@@ -34,6 +34,10 @@ Route::post('comment/{id}', 'App\Http\Controllers\NewsController@postComment');
 Route::get('cars', 'App\Http\Controllers\CarController@getCars');
 Route::get('series', 'App\Http\Controllers\CarController@getSeries');
 
+//service
+Route::get('service', 'App\Http\Controllers\UserController@getServices');
+Route::get('service/{id}', 'App\Http\Controllers\UserController@getServiceId');
+
 Route::get('popular-services', 'App\Http\Controllers\UserController@getPopularServices');
 
 Route::group([
@@ -47,9 +51,6 @@ Route::group([
     Route::post('profile', 'App\Http\Controllers\UserController@updateProfile');
     Route::post('profile/photo', 'App\Http\Controllers\UserController@postProfilePhoto');
     Route::post('profile/del-photo/{id}', 'App\Http\Controllers\UserController@delProfilePhoto');
-
-    Route::get('service', 'App\Http\Controllers\UserController@getServices');
-    Route::get('service/{id}', 'App\Http\Controllers\UserController@getServiceId');
 
     // favorites
     Route::get('favorites', 'App\Http\Controllers\UserController@getFavorites');
